@@ -1,0 +1,31 @@
+name: Build And Deploy
+
+on:
+  push:
+    branches:
+      - Deployment
+
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: install Dependencies
+        run: npm install
+
+
+      - name: Deploy to Deployment server
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOYMENT_SSH_PK }}
+          REMOTE_HOST: "ec2-35-173-60-71.compute-1.amazonaws.com" 
+          REMOTE_USER: "ubuntu"
+          TARGET: "/home/ubuntu/exchange-listing/exchange-listing"
